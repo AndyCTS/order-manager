@@ -10,6 +10,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+
+import org.hibernate.annotations.GenericGenerator;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 /*
@@ -20,7 +23,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class OrderMaster {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(
+			strategy = GenerationType.AUTO,
+			generator="native"
+	)
+	@GenericGenerator(
+			name="native",
+			strategy="native"
+	)
 	private long orderId;	
 	
 	private String orderName;
@@ -154,7 +164,17 @@ public class OrderMaster {
 	
 	@Override
 	public String toString() {
-		return this.getOrderDescription();
+		
+		String displayMasterRecord = "Master Order ID: " + this.getOrderId() + ", Master Order Description: " + this.getOrderDescription() + "\n\n\n\n";
+		List<OrderItem> childOrders = this.getOrderItems();
+		String displayChildRecords = "";
+		if (childOrders!= null) {
+			for (OrderItem item: childOrders) {
+				displayChildRecords = displayChildRecords + "Order Item ID: " + item.getOrderId() + ", Description: " + item.getDescription() + "\n\n";			
+			}
+		}
+		
+		return displayMasterRecord + displayChildRecords;
 	}
 	
     

@@ -1,9 +1,8 @@
 package com.shoppingcart.order.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,44 +19,20 @@ public class OrderProducersController {
 	IOrderProducerService orderProducerService;
 	
 	@PostMapping(value="/putOrderToQueue")
-	//@RequestMapping(value="/create",method={RequestMethod.POST},consumes="{application/json}}")
-
-	public Map<String, Object> createOrder(@RequestBody OrderMaster order) {
-		String msg, sts;
+	public ResponseEntity<OrderMaster> createOrder(@RequestBody OrderMaster order) {
+		ResponseEntity<OrderMaster> responseEntity;
 		System.out.println("\n\n\n\n***** End point putOrderToQueue invoked **** \n\n\n\n");
 		order = orderProducerService.addOrder(order);
 		System.out.println("\n\n\n\n***** Order returned ****" + order + " \n\n\n\n");
-		Map <String, Object> dataMap = new HashMap<String, Object>();
-		
 		if (order!=null) {
-			msg="Order created successfully";
-			sts="1";						
+			responseEntity = new ResponseEntity<OrderMaster>(order, HttpStatus.OK);
 		}
 		else {
-			msg="Order creation failed";
-			sts="0";	
+			responseEntity = new ResponseEntity<OrderMaster>(HttpStatus.NOT_FOUND);
 		}
-		dataMap.put("message", msg);
-		dataMap.put("status", sts);
-		dataMap.put("order", order);
 		
-		return dataMap;
+		return responseEntity;
 
 	}
-	
 
-	
-/*    @RequestMapping(value= "/findUser", method = {RequestMethod.GET})
-    public ResponseEntity<User> findUser(@RequestParam("userName") String userName) {
-    	System.out.println(" \n\n\n**** Inside findUser 1 ****\n\n\n");
-        User user =  userService.findUserByName(userName);
-        System.out.println(" \n\n\n**** Inside findUser 2 ****\n\n\n");
-
-        return new ResponseEntity<User>(user, HttpStatus.OK);
-    }
-*/
-	
-	
-
-	
 }
